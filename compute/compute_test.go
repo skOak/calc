@@ -1,7 +1,9 @@
 package compute
 
 import (
+	"github.com/skOak/calc/variables"
 	"math"
+	"math/rand"
 	"strconv"
 	"testing"
 )
@@ -31,13 +33,27 @@ var exps = map[string]float64{
 	"2(e^3)":                      40.1710738464,
 	"sin(pi*π)":                   -0.430301217,
 	"3π":                          9.42477796,
+	"__version * __age * 100": 4140,
+}
+
+func Variable(name string) float64 {
+	switch name {
+	case "version":
+		return 2.3
+	case "age":
+		return 18
+	case "rand":
+		return float64(rand.Int())
+	default:
+		return 100
+	}
 }
 
 const DELTA = 0.000001
 
 func TestEvaluate(t *testing.T) {
 	for expression, expected := range exps {
-		res, err := Evaluate(expression)
+		res, err := Evaluate(expression, variables.ValueSourceFunc(Variable))
 		if err != nil {
 			t.Error(err)
 		} else if math.Abs(res-expected) > DELTA {
@@ -67,7 +83,7 @@ func TestEvaluateInvalid(t *testing.T) {
 		ClearHistory()
 		var fail error
 		for _, expr := range series {
-			if _, err := Evaluate(expr); err != nil {
+			if _, err := Evaluate(expr, nil); err != nil {
 				fail = err
 				break
 			}
@@ -95,6 +111,6 @@ func BenchmarkEvaluate(b *testing.B) {
 		"tan(10)cos(20)",
 	}
 	for i := 0; i < b.N; i++ {
-		Evaluate(tests[i%len(tests)])
+		Evaluate(tests[i%len(tests)], nil)
 	}
 }

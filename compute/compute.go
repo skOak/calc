@@ -9,9 +9,10 @@ import (
 )
 
 import (
-	"github.com/alfredxing/calc/constants"
-	"github.com/alfredxing/calc/operators"
-	"github.com/alfredxing/calc/operators/functions"
+	"github.com/skOak/calc/constants"
+	"github.com/skOak/calc/operators"
+	"github.com/skOak/calc/operators/functions"
+	"github.com/skOak/calc/variables"
 )
 
 var resHistory = []float64{}
@@ -21,7 +22,7 @@ func ClearHistory() {
 	resHistory = []float64{}
 }
 
-func Evaluate(in string) (float64, error) {
+func Evaluate(in string, source variables.ValueSource) (float64, error) {
 	floats := NewFloatStack()
 	ops := NewStringStack()
 	s := initScanner(in)
@@ -52,6 +53,11 @@ ScanLoop:
 			back += 1
 		case constants.IsConstant(lit):
 			floats.Push(constants.GetValue(lit))
+			if prev == token.RPAREN || isOperand(prev) {
+				evalUnprecedenced("*", ops, floats)
+			}
+		case variables.IsVariable(lit):
+			floats.Push(variables.GetValue(lit, source))
 			if prev == token.RPAREN || isOperand(prev) {
 				evalUnprecedenced("*", ops, floats)
 			}
