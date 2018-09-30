@@ -2,6 +2,7 @@ package compute
 
 import (
 	"github.com/skOak/calc/variables"
+
 	"math"
 	"math/rand"
 	"strconv"
@@ -34,6 +35,10 @@ var exps = map[string]float64{
 	"sin(pi*π)":                   -0.430301217,
 	"3π":                          9.42477796,
 	"__version * __age * 100": 4140,
+	"__version/2*3>1":         3.45, // max
+	"__version/2*3<1":         1,    // min
+	"10*(__version/2*3<2)":    20,   // min
+	"10*(__version/2*3 > 2)":  34.5, // max
 }
 
 func Variable(name string) float64 {
