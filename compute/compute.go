@@ -6,9 +6,7 @@ import (
 	"go/token"
 	"strconv"
 	"strings"
-)
 
-import (
 	"github.com/skOak/calc/constants"
 	"github.com/skOak/calc/operators"
 	"github.com/skOak/calc/operators/functions"
@@ -26,6 +24,7 @@ func Evaluate(in string, source variables.ValueSource) (float64, error) {
 	floats := NewFloatStack()
 	ops := NewStringStack()
 	s := initScanner(in)
+	defer ClearHistory()
 
 	var prev token.Token = token.ILLEGAL
 	var back int = -1
